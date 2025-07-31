@@ -4,34 +4,47 @@ from langchain_community.document_loaders import UnstructuredURLLoader, PyPDFLoa
 from langchain_core.documents import Document
 from langchain.chains.summarize import load_summarize_chain
 from langchain_core.prompts import PromptTemplate
+from langchain.text_splitter import RecursiveCharacterTextSplitter # New import
 import validators
 import os
 import base64
 from PIL import Image
 import time
+
+# --- Import YouTube utility functions from yutils.py ---
 from ytUtils import get_transcript_as_document, validate_youtube_url
 
-# --- Import from generalUtils (assuming you have it) ---
-# If you created a generalUtils.py file with the code you provided earlier, you should import it here.
-# from generalUtils import summarize_chain, generate_audio, generate_quiz_chain
+# We no longer need to import these specific exceptions here, as they are handled in ytUtils.py
+# and it raises a RuntimeError with a detailed message.
 
-# --- Utility Functions (for demo) ---
-def summarize_chain(docs, llm):
-    """Generates a detailed summary from a list of documents."""
-    prompt_template = """
-    Provide a detailed summary of the following content. The summary should be:
-    - Comprehensive yet concise, capturing all key points, concepts, and arguments.
-    - Well-structured with clear headings, bullet points, or numbered lists to organize the information.
-    - Easy to read and understand for someone unfamiliar with the topic.
-
-    CONTENT:
-    {text}
-
-    DETAILED SUMMARY:
+# --- Utility Functions (Normally in generalUtils.py) ---
+def summarize_chain(docs, llm, chain_type="stuff"):
     """
-    prompt = PromptTemplate.from_template(prompt_template)
-    chain = load_summarize_chain(llm, chain_type="stuff", prompt=prompt)
-    return chain.run(docs)
+    Generates a detailed summary from a list of documents.
+    Supports 'stuff' for single-chunk documents and 'map_reduce' for multi-chunk documents.
+    """
+    if chain_type == "stuff":
+        prompt_template = """
+        Provide a detailed summary of the following content. The summary should be:
+        - Comprehensive yet concise, capturing all key points, concepts, and arguments.
+        - Well-structured with clear headings, bullet points, or numbered lists to organize the information.
+        - Easy to read and understand for someone unfamiliar with the topic.
+
+        CONTENT:
+        {text}
+
+        DETAILED SUMMARY:
+        """
+        prompt = PromptTemplate.from_template(prompt_template)
+        chain = load_summarize_chain(llm, chain_type="stuff", prompt=prompt)
+        return chain.run(docs)
+    elif chain_type == "map_reduce":
+        # For larger documents, summarize each chunk and then combine the summaries.
+        chain = load_summarize_chain(llm, chain_type="map_reduce")
+        return chain.run(docs)
+    else:
+        raise ValueError(f"Invalid chain_type: {chain_type}")
+
 
 def generate_quiz_chain(docs, llm):
     """Generates a practice quiz from a list of documents."""
@@ -180,7 +193,6 @@ if not groq_api_key:
     st.warning("Please enter your Groq API key in the sidebar to get started.", icon="👈")
     st.stop()
     
-# Initialize LLM only if the key is present and the LLM isn't already in session state
 if 'llm' not in st.session_state or st.session_state.llm is None:
     st.session_state.llm = ChatGroq(
         api_key=groq_api_key,
@@ -338,13 +350,23 @@ elif st.session_state.mode == "pdf":
                         if not all_docs:
                             st.error("❌ Could not extract text from the PDF files. They might be scanned images or contain no readable text.")
                         else:
-                            output_summary = summarize_chain(all_docs, llm)
+                            # Use RecursiveCharacterTextSplitter to split large documents
+                            # A chunk_size of 2000 and overlap of 100 is a good starting point.
+                            text_splitter = RecursiveCharacterTextSplitter(
+                                chunk_size=2000, 
+                                chunk_overlap=100
+                            )
+                            split_docs = text_splitter.split_documents(all_docs)
+
+                            # Now, pass the split documents and use the "map_reduce" chain
+                            output_summary = summarize_chain(split_docs, llm, chain_type="map_reduce")
+                            
                             st.markdown('<div class="output-container">', unsafe_allow_html=True)
                             st.markdown("### 📋 Summary")
                             st.markdown(output_summary)
                             st.markdown('</div>', unsafe_allow_html=True)
                 except Exception as e:
-                    st.error(f"❌ Error processing PDF: {str(e)}. Please ensure the PDF is not corrupted.")
+                    st.error(f"❌ An error occurred: {str(e)}. Please ensure the PDF is not corrupted or try another.")
             else:
                 st.warning("Please upload at least one PDF file.")
 

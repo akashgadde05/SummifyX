@@ -1,15 +1,14 @@
-langchain
-python-dotenv
-langchain_community
-langchain_core
 streamlit
-langchain_groq
-langchain_text_splitters
-pypdf
-validators==0.28.1
-youtube_transcript_api
-pytube
-unstructured
-transformers
+langchain
+langchain-groq
+langchain-community
+langchain-text-splitters
+validators
 gtts
-Pillow
+youtube-transcript-api
+unstructured[pdf]
+# The above line installs dependencies for UnstructuredURLLoader and PyPDFLoader
+# If you run into issues, try installing the following instead:
+# unstructured
+# pypdf
+# python-magic

@@ -10,14 +10,9 @@ import os
 import base64
 from PIL import Image
 import time
-
-# --- Import YouTube utility functions from yutils.py ---
 from ytUtils import get_transcript_as_document, validate_youtube_url
 
-# We no longer need to import these specific exceptions here, as they are handled in ytUtils.py
-# and it raises a RuntimeError with a detailed message.
-
-# --- Utility Functions (Normally in generalUtils.py) ---
+# --- Utility Functions ---
 def summarize_chain(docs, llm, chain_type="stuff"):
     """
     Generates a detailed summary from a list of documents.
@@ -44,7 +39,6 @@ def summarize_chain(docs, llm, chain_type="stuff"):
         return chain.run(docs)
     else:
         raise ValueError(f"Invalid chain_type: {chain_type}")
-
 
 def generate_quiz_chain(docs, llm):
     """Generates a practice quiz from a list of documents."""
@@ -193,6 +187,7 @@ if not groq_api_key:
     st.warning("Please enter your Groq API key in the sidebar to get started.", icon="👈")
     st.stop()
     
+# Initialize LLM only if the key is present and the LLM isn't already in session state
 if 'llm' not in st.session_state or st.session_state.llm is None:
     st.session_state.llm = ChatGroq(
         api_key=groq_api_key,
@@ -351,7 +346,6 @@ elif st.session_state.mode == "pdf":
                             st.error("❌ Could not extract text from the PDF files. They might be scanned images or contain no readable text.")
                         else:
                             # Use RecursiveCharacterTextSplitter to split large documents
-                            # A chunk_size of 2000 and overlap of 100 is a good starting point.
                             text_splitter = RecursiveCharacterTextSplitter(
                                 chunk_size=2000, 
                                 chunk_overlap=100
@@ -375,3 +369,4 @@ if st.session_state.mode:
     if st.button("🔄 Select Another Tool", key="reset"):
         st.session_state.mode = None
         st.rerun()
+        

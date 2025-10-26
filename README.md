@@ -1,8 +1,8 @@
-# 🎯 Zummary - Enhanced AI Content Summarizer
+# 🎯 SummifyX - Enhanced AI Content Summarizer
 
-![Zummary Logo](zummary_logo.png)
+![SummifyX Logo](summifyx_logo.png)
 
-Zummary is a powerful, AI-driven content summarization application built with Streamlit. It intelligently processes and summarizes content from YouTube videos, web articles, and PDF documents, providing both text and audio outputs with downloadable formats.
+SummifyX is a powerful, AI-driven content summarization application built with Streamlit. It intelligently processes and summarizes content from YouTube videos, web articles, and PDF documents, providing both text and audio outputs with downloadable formats.
 
 ## ✨ New Features & Enhancements
 
@@ -59,20 +59,20 @@ Zummary is a powerful, AI-driven content summarization application built with St
 
 ### 1. **Clone the Repository**
 ```bash
-git clone https://github.com/your-username/Zummary-Enhanced.git
-cd Zummary-Enhanced
+git clone https://github.com/your-username/SummifyX-Enhanced.git
+cd SummifyX-Enhanced
 ```
 
 ### 2. **Set Up Virtual Environment** (Recommended)
 ```bash
 # Create virtual environment
-python -m venv zummary_env
+python -m venv summifyx_env
 
 # Activate it
 # On Windows:
-zummary_env\Scripts\activate
+summifyx_env\Scripts\activate
 # On macOS/Linux:
-source zummary_env/bin/activate
+source summifyx_env/bin/activate
 ```
 
 ### 3. **Install Dependencies**
@@ -317,9 +317,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/your-username/Zummary-Enhanced/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-username/Zummary-Enhanced/discussions)
-- **Email**: your-email@example.com
+- **Issues**: [GitHub Issues](https://github.com/your-username/SummifyX-Enhanced/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/your-username/SummifyX-Enhanced/discussions)
+- **Email**: akashgadde05@gmail.com
 
 ---
 

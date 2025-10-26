@@ -1,6 +1,6 @@
 # 🎯 SummifyX - Enhanced AI Content Summarizer
 
-![SummifyX Logo](summifyx_logo.png)
+![SummifyX Logo](summify_logo.jpg)
 
 SummifyX is a powerful, AI-driven content summarization application built with Streamlit. It intelligently processes and summarizes content from YouTube videos, web articles, and PDF documents, providing both text and audio outputs with downloadable formats.
 
